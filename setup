@@ -3,7 +3,7 @@
 
 # generic values
 MAKE="make"
-F90="f90"
+F90="ifort"
 F90_OPTS="-O3"
 F77=$F90
 F77_OPTS=$F90_OPTS
