@@ -6,3 +6,4 @@ elk
 eos
 spacegroup
 */*.a
+*.OUT

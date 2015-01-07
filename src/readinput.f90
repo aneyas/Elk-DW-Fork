@@ -285,7 +285,7 @@ if ((scan(trim(block),'!').eq.1).or.(scan(trim(block),'#').eq.1)) goto 10
 select case(trim(block))
 case('tasks')
   do i=1,maxtasks
-    read(50,'(A256)',err=20) str
+  read(50,'(A256)',err=20,end=30) str
     if (trim(str).eq.'') then
       if (i.eq.1) then
         write(*,*)
