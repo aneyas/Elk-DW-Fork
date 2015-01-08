@@ -81,6 +81,10 @@ case(300)
   write(fnum,'("+----------------------------------------------+")')
   write(fnum,'("| Reduced density matrix functional theory run |")')
   write(fnum,'("+----------------------------------------------+")')
+case(1100)
+  write(fnum,'("+-------------------------------------------------------+")')
+  write(fnum,'("| Shift atoms using pred-Corr method according to force |")')
+  write(fnum,'("+-------------------------------------------------------+")')
 case default
   write(*,*)
   write(*,'("Error(writeinfo): task not defined : ",I8)') task

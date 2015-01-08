@@ -82,6 +82,7 @@ if (mp_mpi) then
   write(60,*)
 end if
 ! initialise or read the charge density and potentials from file
+!TODO: for task=1100, the state should be read.
 iscl=0
 if (trdstate) then
   call readstate

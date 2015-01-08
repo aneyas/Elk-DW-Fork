@@ -188,6 +188,8 @@ do itask=1,ntasks
     call tddft
   case(500)
     call testcheck
+  case(1100) !To track the shift of each atoms.
+    call mdtrace
   case default
     write(*,*)
     write(*,'("Error(main): task not defined : ",I8)') task

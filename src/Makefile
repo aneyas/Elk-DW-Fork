@@ -71,7 +71,8 @@ SRC_routines = \
  hmldbsek.f90 dielectric_bse.f90 genidxbse.f90 writeevbse.f90 hartfock.f90 \
  hflocal.f90 genkmatc.f90 zrhogp.f90 genwfpw.f90 writewfpw.f90 getwfpw.f90 \
  genbmatk.f90 genexpmat.f90 writeexpmat.f90 rvfcross.f90 rfarray.f90 \
- rotdmat.f90 hrmdmat.f90 genfspecies.f90 writespecies.f90 massnucl.f90
+ rotdmat.f90 hrmdmat.f90 genfspecies.f90 writespecies.f90 massnucl.f90 \
+ mdtrace.f90
 
 SRC_phonon = \
  phononsc.f90 dyntask.f90 genscph.f90 phdisp.f90 readdyn.f90 dynqtor.f90 \
