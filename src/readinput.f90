@@ -300,7 +300,7 @@ case('tasks')
     if (iostat.ne.0) then
       write(*,*)
       write(*,'("Error(readinput): error reading tasks")')
-      write(*,'("(blank line required after tasks block)")')
+      write(*,'("(perhaps, blank line is required after tasks block)")')
       write(*,*)
       stop
     end if
