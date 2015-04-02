@@ -30,30 +30,28 @@ et0=engytot
 ! subsequent calculations will read STATE.OUT
 trdstate=.true.
 ! loop over strain tensors
-do i=1,nstrain
-  if (mp_mpi) then
-    write(*,'("Info(genstress): strain tensor ",I1," of ",I1)') i,nstrain
-  end if
-! displace lattice vectors
-  avec(:,:)=avec0(:,:)+deltast*strain(:,:,i)
-! run the ground-state calculation
-  call gndstate
-! check for stop signal
-  if (tstop) goto 10
-! compute the stress tensor component
-  stress(i)=(engytot-et0)/deltast
-end do
 
 !Thu Apr  2 02:51:09 EDT 2015
 !DW: keep the xy-plane unchanged because of exptaxial strain.
 kstrain=0
+stress(:)=0.0d0
 do i=1,3
-  do j=1,3
-    kstrain=kstrain+1
-    if(i<=2 .and. j<=2) then
-      stress(kstrain)=0.0d0
-    endif
-  enddo
+do j=1,3
+kstrain=kstrain+1
+if(i>2 .and. j>2) then
+  if (mp_mpi) then
+    write(*,'("Info(genstress): strain tensor ",I1," of ",I1)') i,nstrain
+  end if
+  ! displace lattice vectors
+  avec(:,:)=avec0(:,:)+deltast*strain(:,:,i)
+  ! run the ground-state calculation
+  call gndstate
+  ! check for stop signal
+  if (tstop) goto 10
+  ! compute the stress tensor component
+  stress(kstrain)=(engytot-et0)/deltast
+endif
+enddo
 enddo
 
 10 continue
