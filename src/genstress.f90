@@ -9,7 +9,7 @@ use modmpi
 use modstore
 implicit none
 ! local variables
-integer i
+integer i,j, kstrain
 real(8) et0,t1
 ! store original parameters
 avec0(:,:)=avec(:,:)
@@ -43,6 +43,19 @@ do i=1,nstrain
 ! compute the stress tensor component
   stress(i)=(engytot-et0)/deltast
 end do
+
+!Thu Apr  2 02:51:09 EDT 2015
+!DW: keep the xy-plane unchanged because of exptaxial strain.
+kstrain=0
+do i=1,3
+  do j=1,3
+    kstrain=kstrain+1
+    if(i<=2 .and. j<=2) then
+      stress(kstrain)=0.0d0
+    endif
+  enddo
+enddo
+
 10 continue
 ! compute the maximum stress magnitude over all lattice vectors
 stressmax=0.d0
