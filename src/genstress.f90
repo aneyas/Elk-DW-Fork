@@ -43,7 +43,7 @@ if(i>2 .and. j>2) then
     write(*,'("Info(genstress): strain tensor ",I1," of ",I1)') i,nstrain
   end if
   ! displace lattice vectors
-  avec(:,:)=avec0(:,:)+deltast*strain(:,:,i)
+  avec(:,:)=avec0(:,:)+deltast*strain(:,:,kstrain)
   ! run the ground-state calculation
   call gndstate
   ! check for stop signal
