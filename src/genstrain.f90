@@ -17,7 +17,9 @@ do i=1,3
   do j=1,3
 ! set strain tensor in lattice coordinates to delta_ij
     a(:,:)=0.d0
-    a(i,j)=1.d0
+    if(i>2 .or. j>2) then
+      a(i,j)=1.d0
+    endif
 ! symmetrise strain tensor
     call symmat(a)
 ! convert to mixed Cartesian-lattice coordinates
