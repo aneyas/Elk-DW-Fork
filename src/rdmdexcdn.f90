@@ -55,7 +55,7 @@ do ik1=1,nkptnr
   call getvclijji(ik1,vclijji)
 ! find the equivalent reduced k-point
   iv(:)=ivk(:,ik1)
-  jk=ikmap(iv(1),iv(2),iv(3))
+  jk=ivkik(iv(1),iv(2),iv(3))
 !  loop over reduced k-points
   do ik2=1,nkpt
     do ist1=1,nstsv

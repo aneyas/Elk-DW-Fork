@@ -6,7 +6,7 @@
 !BOP
 ! !ROUTINE: getevecfv
 ! !INTERFACE:
-subroutine getevecfv(vpl,vgpl,evecfv)
+subroutine getevecfv(fext,vpl,vgpl,evecfv)
 ! !USES:
 use modmain
 ! !INPUT/OUTPUT PARAMETERS:
@@ -26,6 +26,7 @@ use modmain
 !BOC
 implicit none
 ! arguments
+character(*), intent(in) :: fext
 real(8), intent(in) :: vpl(3),vgpl(3,ngkmax,nspnfv)
 complex(8), intent(out) :: evecfv(nmatmax,nstfv,nspnfv)
 ! local variables
@@ -44,7 +45,7 @@ call findkpt(vpl,isym,ik)
 ! find the record length
 inquire(iolength=recl) vkl_,nmatmax_,nstfv_,nspnfv_,evecfv
 !$OMP CRITICAL
-open(70,file=trim(scrpath)//'EVECFV'//trim(filext),action='READ', &
+open(70,file=trim(scrpath)//'EVECFV'//trim(fext),action='READ', &
  form='UNFORMATTED',access='DIRECT',recl=recl)
 read(70,rec=ik) vkl_,nmatmax_,nstfv_,nspnfv_,evecfv
 close(70)

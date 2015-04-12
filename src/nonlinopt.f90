@@ -41,8 +41,8 @@ call init1
 call readfermi
 ! get the eigenvalues and occupancies from file
 do ik=1,nkpt
-  call getevalsv(vkl(:,ik),evalsv(:,ik))
-  call getoccsv(vkl(:,ik),occsv(:,ik))
+  call getevalsv(filext,vkl(:,ik),evalsv(:,ik))
+  call getoccsv(filext,vkl(:,ik),occsv(:,ik))
 end do
 ! generate energy grid (starting from zero)
 allocate(w(nwplot))
@@ -69,12 +69,14 @@ do l=1,noptcomp
 !$OMP PRIVATE(pii,dji,vji,vik,vkj,ztm)
 !$OMP DO
   do ik=1,nkptnr
-    allocate(pmat(3,nstsv,nstsv))
+    allocate(pmat(nstsv,nstsv,3))
+!$OMP CRITICAL
     write(*,'("Info(nonlinopt): ",I6," of ",I6," k-points")') ik,nkptnr
+!$OMP END CRITICAL
 ! equivalent reduced k-point
-    jk=ikmap(ivk(1,ik),ivk(2,ik),ivk(3,ik))
+    jk=ivkik(ivk(1,ik),ivk(2,ik),ivk(3,ik))
 ! read momentum matrix elements from file
-    call getpmat(vkl(:,ik),pmat)
+    call getpmat(.false.,vkl(:,ik),pmat)
 ! scissor correct the matrix elements
     do ist=1,nstsv
       if (evalsv(ist,jk).lt.efermi) then
@@ -82,7 +84,7 @@ do l=1,noptcomp
           if (evalsv(jst,jk).gt.efermi) then
             eji=evalsv(jst,jk)-evalsv(ist,jk)
             t1=(eji+scissor)/eji
-            pmat(:,ist,jst)=t1*pmat(:,ist,jst)
+            pmat(ist,jst,:)=t1*pmat(ist,jst,:)
           end if
         end do
       end if
@@ -91,13 +93,13 @@ do l=1,noptcomp
 ! loop over valence states
     do ist=1,nstsv
       if (evalsv(ist,jk).lt.efermi) then
-        pii(:)=pmat(:,ist,ist)
+        pii(:)=pmat(ist,ist,:)
 ! loop over conduction states
         do jst=1,nstsv
           if (evalsv(jst,jk).gt.efermi) then
             eji=evalsv(jst,jk)-evalsv(ist,jk)+scissor
-            vji(:)=pmat(:,jst,ist)
-            dji(:)=pmat(:,jst,jst)-pii(:)
+            vji(:)=pmat(jst,ist,:)
+            dji(:)=pmat(jst,jst,:)-pii(:)
 ! loop over intermediate states
             do kst=1,nstsv
               if ((kst.ne.ist).and.(kst.ne.jst)) then
@@ -109,8 +111,8 @@ do l=1,noptcomp
                   ekj=ekj-scissor
                 end if
 ! rotate the matrix elements from the reduced to non-reduced k-point
-                vkj(:)=pmat(:,kst,jst)
-                vik(:)=pmat(:,ist,kst)
+                vkj(:)=pmat(kst,jst,:)
+                vik(:)=pmat(ist,kst,:)
 ! interband terms
                 t1=-eji*eki*(-ekj)*(eki+ekj)
                 if (abs(t1).gt.etol) then

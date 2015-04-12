@@ -68,24 +68,18 @@ evecsv(:,:)=0.d0
 !     muffin-tin part     !
 !-------------------------!
 lmi=lmmaxinr
+allocate(wfmt1(lmmaxvr,nrcmtmax,nstfv),wfmt2(lmmaxvr,nrcmtmax))
+allocate(wfmt3(lmmaxvr,nrcmtmax),wfmt4(lmmaxvr,nrcmtmax,nsc))
+if (afieldpol) allocate(gwfmt(lmmaxvr,nrcmtmax,3))
 ! begin loop over atoms
-!$OMP PARALLEL DEFAULT(SHARED) &
-!$OMP PRIVATE(wfmt1,wfmt2,wfmt3,wfmt4,gwfmt) &
-!$OMP PRIVATE(is,nrc,nrci,iro,ist,jst,irc,zlflm) &
-!$OMP PRIVATE(t1,l,nm,lm,i,j,k,ispn,jspn)
-!$OMP DO
 do ias=1,natmtot
-  allocate(wfmt1(lmmaxvr,nrcmtmax,nstfv),wfmt2(lmmaxvr,nrcmtmax))
-  allocate(wfmt3(lmmaxvr,nrcmtmax),wfmt4(lmmaxvr,nrcmtmax,nsc))
-  if (afieldpol) allocate(gwfmt(lmmaxvr,nrcmtmax,3))
   is=idxis(ias)
   nrc=nrcmt(is)
   nrci=nrcmtinr(is)
   iro=nrci+1
 ! compute the first-variational wavefunctions
   do ist=1,nstfv
-    call wavefmt(lradstp,lmaxvr,ias,ngp,apwalm,evecfv(:,ist),lmmaxvr, &
-     wfmt1(:,:,ist))
+    call wavefmt(lradstp,ias,ngp,apwalm,evecfv(:,ist),wfmt1(:,:,ist))
   end do
 ! begin loop over states
   do jst=1,nstfv
@@ -168,6 +162,8 @@ do ias=1,natmtot
       end do
     end if
 ! second-variational Hamiltonian matrix
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(i,j,k)
+!$OMP DO
     do ist=1,nstfv
       do k=1,nsc
         if (k.eq.1) then
@@ -181,31 +177,26 @@ do ias=1,natmtot
           j=jst+nstfv
         end if
         if (i.le.j) then
-!$OMP ATOMIC
-          evecsv(i,j)=evecsv(i,j)+zfmtinp(.true.,nrc,nrci,rcmt(:,is), &
-           wfmt1(:,:,ist),wfmt4(:,:,k))
+          evecsv(i,j)=evecsv(i,j)+zfmtinp(nrc,nrci,rcmt(:,is),wfmt1(:,:,ist), &
+           wfmt4(:,:,k))
         end if
       end do
     end do
-! end loop over states
-  end do
-  deallocate(wfmt1,wfmt2,wfmt3,wfmt4)
-  if (afieldpol) deallocate(gwfmt)
-! end loop over atoms
-end do
 !$OMP END DO
 !$OMP END PARALLEL
+! end loop over states
+  end do
+! end loop over atoms
+end do
+deallocate(wfmt1,wfmt2,wfmt3,wfmt4)
+if (afieldpol) deallocate(gwfmt)
 !---------------------------!
 !     interstitial part     !
 !---------------------------!
 if (spinpol) then
+  allocate(wfir1(ngtot),wfir2(ngtot),z(ngkmax,nsc))
 ! begin loop over states
-!$OMP PARALLEL DEFAULT(SHARED) &
-!$OMP PRIVATE(wfir1,wfir2,z) &
-!$OMP PRIVATE(igp,ifg,t1,z1,i,j,k,ist)
-!$OMP DO
   do jst=1,nstfv
-    allocate(wfir1(ngtot),wfir2(ngtot),z(ngkmax,nsc))
     wfir1(:)=0.d0
     do igp=1,ngp
       ifg=igfft(igpig(igp))
@@ -244,6 +235,8 @@ if (spinpol) then
       end do
     end if
 ! add to Hamiltonian matrix
+!$OMP PARALLEL DEFAULT(SHARED) PRIVATE(i,j,k)
+!$OMP DO
     do ist=1,nstfv
       do k=1,nsc
         if (k.eq.1) then
@@ -257,16 +250,15 @@ if (spinpol) then
           j=jst+nstfv
         end if
         if (i.le.j) then
-!$OMP ATOMIC
           evecsv(i,j)=evecsv(i,j)+zdotc(ngp,evecfv(:,ist),1,z(:,k),1)
         end if
       end do
     end do
-    deallocate(wfir1,wfir2,z)
-! end loop over states
-  end do
 !$OMP END DO
 !$OMP END PARALLEL
+! end loop over states
+  end do
+  deallocate(wfir1,wfir2,z)
 end if
 ! add the diagonal first-variational part
 i=0
@@ -283,10 +275,10 @@ allocate(work(lwork))
 if (ndmag.eq.1) then
 ! collinear: block diagonalise H
   call zheev('V','U',nstfv,evecsv,nstsv,evalsvp,work,lwork,rwork,info)
-  if (info.ne.0) goto 20
+  if (info.ne.0) goto 10
   i=nstfv+1
   call zheev('V','U',nstfv,evecsv(i,i),nstsv,evalsvp(i),work,lwork,rwork,info)
-  if (info.ne.0) goto 20
+  if (info.ne.0) goto 10
   do i=1,nstfv
     do j=1,nstfv
       evecsv(i,j+nstfv)=0.d0
@@ -296,14 +288,15 @@ if (ndmag.eq.1) then
 else
 ! non-collinear or spin-unpolarised: full diagonalisation
   call zheev('V','U',nstsv,evecsv,nstsv,evalsvp,work,lwork,rwork,info)
-  if (info.ne.0) goto 20
+  if (info.ne.0) goto 10
 end if
 deallocate(rwork,work)
 call timesec(ts1)
-!$OMP ATOMIC
+!$OMP CRITICAL
 timesv=timesv+ts1-ts0
+!$OMP END CRITICAL
 return
-20 continue
+10 continue
 write(*,*)
 write(*,'("Error(eveqnsv): diagonalisation of the second-variational &
  &Hamiltonian failed")')
@@ -311,3 +304,4 @@ write(*,'(" ZHEEV returned INFO = ",I8)') info
 write(*,*)
 stop
 end subroutine
+

@@ -1,0 +1,15 @@
+
+
+Lattice and atomic position optimisation steps :      1     1
+
+Forces :
+ species :    1 (Fe)
+  atom :    1
+   Hellmann-Feynman          :     0.00000000    0.00000000    0.00000000
+   IBS                       :    -0.00000000    0.00000000    0.00000000
+   total force               :     0.00000000    0.00000000    0.00000000
+   total magnitude           :     0.00000000
+
+Maximum force magnitude over all atoms (target) :    0.000000000     (  0.5000000000E-02)
+
+Force convergence target achieved
