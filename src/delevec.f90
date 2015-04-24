@@ -3,11 +3,23 @@
 ! This file is distributed under the terms of the GNU General Public License.
 ! See the file COPYING for license details.
 
+!BOP
+! !ROUTINE: delevec
+! !INTERFACE:
 subroutine delevec
+! !USES:
 use modmain
 use modmpi
+! !DESCRIPTION:
+!   Deletes the first- and second-variational eigenvector files {\tt EVECFV.OUT}
+!   and {\tt EVECSV.OUT}.
+!
+! !REVISION HISTORY:
+!   Created May 2007 (JKD)
+!EOP
+!BOC
 implicit none
-! only the master process should delete the file
+! only the master process should delete the files
 if (mp_mpi) then
 ! delete the first-variational eigenvector file
   open(70,file=trim(scrpath)//'EVECFV'//trim(filext))
@@ -20,4 +32,5 @@ end if
 call mpi_barrier(mpi_comm_kpt,ierror)
 return
 end subroutine
+!EOC
 

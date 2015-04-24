@@ -52,7 +52,7 @@ end do
 ! Fourier transform the gamma matrices to real-space
 call dynqtor(gmq,gmr)
 ! generate a set of q-point vectors along a path in the Brillouin zone
-call connect(bvec,nvp1d,npp1d,vvlp1d,vplp1d,dvp1d,dpp1d)
+call plotpt1d(bvec,nvp1d,npp1d,vvlp1d,vplp1d,dvp1d,dpp1d)
 gmin=1.d8
 gmax=0.d0
 ! compute the linewidths along the path

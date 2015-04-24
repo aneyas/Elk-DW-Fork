@@ -1,9 +1,9 @@
 
 MAKE = make
-F90 = ifort
-F90_OPTS = -O3 -ip -unroll -no-prec-div -openmp
-F77 = ifort
-F77_OPTS = -O3 -ip -unroll -no-prec-div -openmp
+F90 = gfortran
+F90_OPTS = -O3 -ffast-math -funroll-loops -fopenmp
+F77 = gfortran
+F77_OPTS = -O3 -ffast-math -funroll-loops -fopenmp
 AR = ar
 LIB_SYS = 
 # LAPACK and BLAS libraries

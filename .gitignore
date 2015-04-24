@@ -1,0 +1,7 @@
+*.o
+*.mod
+*.a
+elk
+spacegroup
+eos
+make.inc

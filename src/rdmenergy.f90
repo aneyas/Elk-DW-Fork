@@ -51,7 +51,7 @@ deallocate(rfmt)
 engykn=engykncr
 allocate(evecsv(nstsv,nstsv))
 do ik=1,nkpt
-  call getevecsv(vkl(:,ik),evecsv)
+  call getevecsv(filext,vkl(:,ik),evecsv)
   do ist=1,nstsv
     t1=wkpt(ik)*occsv(ist,ik)
 ! Coulomb energy from valence states
