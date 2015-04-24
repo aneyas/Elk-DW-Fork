@@ -1,0 +1,11 @@
+ 
+Elk code version 2.3.22 started
+ 
+Info(main): current task :      5
+Info(checkmt): reduced muffin-tin radius of species   1 (Ba) from   2.8000 to   2.7446
+Info(checkmt): reduced muffin-tin radius of species   2 (Ti) from   2.4000 to   1.8030
+Info(checkmt): reduced muffin-tin radius of species   3 (Sn) from   2.6000 to   2.2986
+Info(checkmt): reduced muffin-tin radius of species   4 (O) from   1.8000 to   1.1719
+ 
+Error(readstate): error opening STATE.OUT
+ 

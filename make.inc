@@ -45,15 +45,16 @@ SRC_FFT = zfftifc.f90
 # LAPACK and BLAS, MKL FFTW and Libxc. The Fortran compiler is mpif90 which
 # enables MPI parallelism. All libraries are statically linked.
 #
-# MKLROOT = /cluster/intel/mkl
-# MAKE = make
-# F90 = mpif90
-# F90_OPTS = -O3 -ip -openmp -I$(MKLROOT)/include
-# F77 = mpif90
-# F77_OPTS = -O3 -ip -openmp
-# AR = ar
-# LIB_SYS =
-# LIB_LPK = -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_intel_thread.a -Wl,--end-group -lpthread -lm -openmp -lfftw3_threads -lfftw3
+ MKLROOT = /opt/intel/compilerpro-12.0.1.107/mkl
+FFTROOT=/home/dwang2/util/lib
+ MAKE = make
+ F90 = ifort
+ F90_OPTS = -O3 -ip -openmp -I$(MKLROOT)/include
+ F77 = ifort
+ F77_OPTS = -O3 -ip -openmp
+ AR = ar
+ LIB_SYS =
+ LIB_LPK = -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_intel_thread.a -Wl,--end-group -lpthread -lm -openmp $(FFTROOT)/libfftw3_threads.a $(FFTROOT)/libfftw3.a
 # SRC_MPI =
 # LIB_libxc = libxcf90.a libxc.a
 # SRC_libxc = libxc_funcs.f90 libxc.f90 libxcifc.f90

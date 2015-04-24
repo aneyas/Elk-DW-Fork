@@ -10,7 +10,7 @@
 ! The final output (PHDISP.OUT and PHDLINES.OUT) is included with this example.
 
 tasks
-  2
+  5
 
 latvopt
   1
@@ -24,7 +24,7 @@ maxscl
   200
 
 autoswidth
-  .true.
+.true.
 autolinengy
 .true.
 
@@ -55,10 +55,10 @@ demaxbnd
 ! it seems only this one is supported for response calculation.
 ! or choose 100 to use libxc
 xctype
-  2 0 0
+  21 0 0
 ! maximum length of |G| for expanding the interstitial density and potential.
 gmaxvr 
-  12.0
+  8.0
 ! set to .true. if the Fourier components of the Kohn-Sham
 ! potential for |G| > gmaxvr/2 are to be set to zero !This fixes stability
 ! problems which can occur for large rgkmax. Should be used only in conjunction
@@ -77,9 +77,9 @@ mixtype
   1
 
 rgkmax
-  8.0
+  12.0
 ngridk
-  4 4 2
+  2 2 2
 
 
 sppath
