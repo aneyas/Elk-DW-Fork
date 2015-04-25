@@ -24,7 +24,10 @@ cat > 'elk.in' <<EOF
 ! The final output (PHDISP.OUT and PHDLINES.OUT) is included with this example.
 
 tasks
-  0
+  3
+  190
+  205
+  220
 
 latvopt
   1
@@ -40,7 +43,7 @@ maxscl
 autoswidth
 .true.
 autolinengy
-.false.
+.true.
 
 lradstp
   2
@@ -78,7 +81,7 @@ gmaxvr
  28
 
 ngridk
-  2 2 2
+  4 4 2
 
 
 sppath
@@ -97,8 +100,8 @@ scale3
  1.0
 
 avec
-   7.683000000       0.000000000       0.000000000    
-   0.000000000       7.683000000       0.000000000    
+   7.283000000       0.000000000       0.000000000    
+   0.000000000       7.283000000       0.000000000    
    0.000000000       0.000000000       18.53300000    
  
 atoms

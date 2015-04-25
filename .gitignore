@@ -8,3 +8,4 @@ make.inc
 *.OUT
 RUNNING
 *.log.*
+*.log
