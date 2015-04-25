@@ -8,7 +8,8 @@ use modmain
 implicit none
 ! local variables
 integer is,ist,iostat
-integer io,nlx,ilx,lx,ilo
+integer nlx,ilx,lx,ilo
+integer io,jo,ko,l,i,j
 e0min=0.d0
 do is=1,nspecies
   open(50,file=trim(sppath)//trim(spfname(is)),action='READ',status='OLD', &
@@ -193,6 +194,22 @@ do is=1,nspecies
       e0min=min(e0min,apwe0(io,lx,is))
     end do
   end do
+! add excess APW functions
+  if (nxapwlo.gt.0) then
+    do l=0,lmaxapw
+      jo=apword(l,is)
+      ko=jo+nxapwlo
+      if (ko.gt.maxapword) ko=maxapword
+      i=0
+      do io=jo+1,ko
+        i=i+1
+        apwe0(io,l,is)=apwe0(jo,l,is)
+        apwdm(io,l,is)=apwdm(jo,l,is)+i
+        apwve(io,l,is)=apwve(jo,l,is)
+      end do
+      apword(l,is)=ko
+    end do
+  end if
   read(50,*) nlorb(is)
   if (nlorb(is).lt.0) then
     write(*,*)
@@ -258,6 +275,29 @@ do is=1,nspecies
       end if
       e0min=min(e0min,lorbe0(io,ilo,is))
     end do
+    if (nxapwlo.gt.0) then
+! find the maximum energy derivative
+      jo=1
+      j=lorbdm(jo,ilo,is)
+      do io=1,lorbord(ilo,is)
+        i=lorbdm(io,ilo,is)
+        if (i.gt.j) then
+          jo=io
+          j=i
+        end if
+      end do
+! add excess local-orbitals
+      ko=lorbord(ilo,is)+nxapwlo
+      if (ko.gt.maxlorbord) ko=maxlorbord
+      i=0
+      do io=lorbord(ilo,is)+1,ko
+        i=i+1
+        lorbe0(io,ilo,is)=lorbe0(jo,ilo,is)
+        lorbdm(io,ilo,is)=lorbdm(jo,ilo,is)+i
+        lorbve(io,ilo,is)=lorbve(jo,ilo,is)
+      end do
+      lorbord(ilo,is)=ko
+    end if
   end do
   close(50)
 end do

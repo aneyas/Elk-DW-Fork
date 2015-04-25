@@ -66,7 +66,7 @@ lmaxapw=8
 lmaxvr=7
 lmaxmat=6
 lmaxinr=3
-fracinr=0.1d0
+fracinr=0.01d0
 trhonorm=.true.
 xctype(1)=3
 xctype(2)=0
@@ -131,7 +131,7 @@ tau0atp=0.25d0
 deltast=0.005d0
 latvopt=0
 maxlatvstp=30
-tau0latv=0.1d0
+tau0latv=0.25d0
 lradstp=4
 chgexs=0.d0
 scissor=0.d0
@@ -153,7 +153,7 @@ taufsm=0.01d0
 rmtdelta=0.05d0
 isgkmax=-1
 symtype=1
-deltaph=0.02d0
+deltaph=0.005d0
 nphwrt=1
 if (allocated(vqlwrt)) deallocate(vqlwrt)
 allocate(vqlwrt(3,nphwrt))
@@ -161,7 +161,6 @@ vqlwrt(:,:)=0.d0
 notelns=0
 tforce=.false.
 tfibs=.true.
-radfhf=0.001d0
 maxitoep=200
 tauoep(1)=1.d0
 tauoep(2)=0.75d0
@@ -262,11 +261,16 @@ ftmstep=1
 cmagz=.false.
 axang(:)=0.d0
 ncgga=.false.
-tstime=5.d0
-dtimes=0.01d0
+tstime=1000.d0
+dtimes=0.1d0
 npulse=0
-ntwrite=10
-ffdamp=.false.
+ntswrite=10
+nxapwlo=0
+tdrho1d=.false.
+tdrho2d=.false.
+tdrho3d=.false.
+tdmag2d=.false.
+tdmag3d=.false.
 
 !--------------------------!
 !     read from elk.in     !
@@ -892,14 +896,6 @@ case('tforce')
   read(50,*,err=20) tforce
 case('tfibs')
   read(50,*,err=20) tfibs
-case('radfhf')
-  read(50,*,err=20) radfhf
-  if (radfhf.lt.0.d0) then
-    write(*,*)
-    write(*,'("Error(readinput): radfhf < 0 : ",G18.10)') radfhf
-    write(*,*)
-    stop
-  end if
 case('maxitoep')
   read(50,*,err=20) maxitoep
   if (maxitoep.lt.1) then
@@ -1334,13 +1330,13 @@ case('highq')
   read(50,*,err=20) highq
 ! parameter set for high-quality calculation
   if (highq) then
-    rgkmax=7.5d0
-    gmaxvr=16.d0
+    rgkmax=8.d0
+    gmaxvr=18.d0
     lmaxapw=10
     lmaxvr=8
     lmaxmat=8
-    lradstp=2
-    fracinr=0.05d0
+    fracinr=0.005d0
+    nrmtscf=2
     radkpt=50.d0
     autokpt=.true.
     vkloff(:)=0.d0
@@ -1348,7 +1344,6 @@ case('highq')
     epspot=1.d-7
     epsengy=1.d-5
     epsforce=1.d-4
-    lorbcnd=.true.
   end if
 case('hmaxvr')
   read(50,*,err=20) hmaxvr
@@ -1518,16 +1513,32 @@ case('pulse')
     stop
   end if
   if (allocated(pulse)) deallocate(pulse)
-  allocate(pulse(7,npulse))
+  allocate(pulse(8,npulse))
   do i=1,npulse
     read(50,*,err=20) pulse(:,i)
   end do
 case('ncgga')
   read(50,*,err=20) ncgga
-case('ntwrite')
-  read(50,*,err=20) ntwrite
-case('ffdamp')
-  read(50,*,err=20) ffdamp
+case('ntswrite')
+  read(50,*,err=20) ntswrite
+case('nxapwlo')
+  read(50,*,err=20) nxapwlo
+  if (nxapwlo.lt.0) then
+    write(*,*)
+    write(*,'("Error(readinput): nxapwlo < 0 : ",I8)') nxapwlo
+    write(*,*)
+    stop
+  end if
+case('tdrho1d')
+  read(50,*,err=20) tdrho1d
+case('tdrho2d')
+  read(50,*,err=20) tdrho2d
+case('tdrho3d')
+  read(50,*,err=20) tdrho3d
+case('tdmag2d')
+  read(50,*,err=20) tdmag2d
+case('tdmag3d')
+  read(50,*,err=20) tdmag3d
 case('')
   goto 10
 case default

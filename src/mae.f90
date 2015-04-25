@@ -80,7 +80,7 @@ do i=1,npmae
 ! subsequent calculations should read the previous density
   trdstate=.true.
 ! make external magnetic field small
-  bfieldc0=0.01d0
+  bfieldc0(3)=-0.01d0
   if (mp_mpi) then
     write(71,*)
     write(71,'("Fixed spin moment direction point ",I6," of ",I6)') i,npmae
