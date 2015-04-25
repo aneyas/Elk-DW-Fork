@@ -5,3 +5,6 @@ elk
 spacegroup
 eos
 make.inc
+*.OUT
+RUNNING
+*.log.*
