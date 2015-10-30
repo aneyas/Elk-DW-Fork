@@ -61,13 +61,11 @@ do j=1,n
       call daxpy(2*(j-1),a1,x,1,a(k+1),1)
       a(k+j)=dble(a(k+j))+a1*dble(x(j))
     end if
-  else
-    if (abs(aimag(z1)).gt.eps) then
+  else if (abs(aimag(z1)).gt.eps) then
 ! imaginary prefactor
-      b1=aimag(z1)
-      a(k+1:k+j-1)=a(k+1:k+j-1)+b1*cmplx(-aimag(x(1:j-1)),dble(x(1:j-1)),8)
-      a(k+j)=dble(a(k+j))-b1*aimag(x(j))
-    end if
+    b1=aimag(z1)
+    a(k+1:k+j-1)=a(k+1:k+j-1)+b1*cmplx(-aimag(x(1:j-1)),dble(x(1:j-1)),8)
+    a(k+j)=dble(a(k+j))-b1*aimag(x(j))
   end if
 end do
 !$OMP END DO

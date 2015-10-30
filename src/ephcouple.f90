@@ -57,6 +57,8 @@ allocate(zfmt(lmmaxvr,nrmtmax))
 allocate(gzfmt(lmmaxvr,nrmtmax,3,natmtot))
 ! read in the density and potentials from file
 call readstate
+! read Fermi energy from file
+call readfermi
 ! find the linearisation energies
 call linengy
 ! set the speed of light >> 1 (non-relativistic approximation)
@@ -89,7 +91,7 @@ do ias=1,natmtot
 ! convert potential to complex spherical harmonic expansion
   call rtozfmt(nrmt(is),nrmtinr(is),1,vsmt(:,:,ias),1,zfmt)
 ! compute the gradients of the Kohn-Sham potential for the rigid-ion term
-  call gradzfmt(nrmt(is),nrmtinr(is),spr(:,is),zfmt,nrmtmax,gzfmt(:,:,:,ias))
+  call gradzfmt(nrmt(is),nrmtinr(is),rsp(:,is),zfmt,nrmtmax,gzfmt(:,:,:,ias))
 end do
 ! loop over phonon q-points
 do iq=1,nqpt

@@ -132,6 +132,8 @@ do itask=1,ntasks
     call writewfpw
   case(140)
     call elnes
+  case(150)
+    call writeevsp
   case(170)
     call writeemd
   case(171,172,173)
@@ -209,7 +211,7 @@ stop
 end program
 
 !BOI
-! !TITLE: {\huge{\sc The Elk Code Manual}}\\ \Large{\sc Version 3.0.18}\\ \vskip 20pt \includegraphics[height=1cm]{elk_silhouette.pdf}
+! !TITLE: {\huge{\sc The Elk Code Manual}}\\ \Large{\sc Version 3.1.12}\\ \vskip 20pt \includegraphics[height=1cm]{elk_silhouette.pdf}
 ! !AUTHORS: {\sc J. K. Dewhurst, S. Sharma} \\ {\sc L. Nordstr\"{o}m, F. Cricchio, F. Bultmark, O. Gr\aa n\"{a}s} \\ {\sc E. K. U. Gross}
 ! !AFFILIATION:
 ! !INTRODUCTION: Introduction
@@ -240,10 +242,11 @@ end program
 !   Bj\"{o}rkman, Martin Stankovski, Jerzy Goraus, Markus Meinert, Daniel Rohr,
 !   Vladimir Nazarov, Kevin Krieger, Pink Floyd, Arkardy Davydov, Florian Eich,
 !   Aldo Romero Castro, Koichi Kitahara, James Glasbrenner, Konrad Bussmann,
-!   Igor Mazin, Matthieu Verstraete, David Ernsting, Stephen Dugdale and Peter
-!   Elliott. Special mention of David Singh's very useful book on the LAPW
-!   method\footnote{D. J. Singh, {\it Planewaves, Pseudopotentials and the LAPW
-!   Method} (Kluwer Academic Publishers, Boston, 1994).} must also be made.
+!   Igor Mazin, Matthieu Verstraete, David Ernsting, Stephen Dugdale, Peter
+!   Elliott, Marcin Dulak, Jos\'{e} A. Flores Livas, Stefaan Cottenier and
+!   Yasushi Shinohara. Special mention of David Singh's very useful book on the
+!   LAPW method\footnote{D. J. Singh, {\it Planewaves, Pseudopotentials and the
+!   LAPW Method} (Kluwer Academic Publishers, Boston, 1994).} must also be made.
 !   Finally we would like to acknowledge the generous support of
 !   Karl-Franzens-Universit\"{a}t Graz, as well as the EU Marie-Curie Research
 !   Training Networks initiative.
@@ -258,7 +261,7 @@ end program
 !   Hardy Gross
 !
 !   \vspace{12pt}
-!   Halle and Uppsala, April 2015
+!   Halle and Uppsala, July 2015
 !   \newpage
 !
 !   \section{Units}
@@ -400,9 +403,9 @@ end program
 !    'copper'                                  : spname
 !   -29.0000                                   : spzn
 !    115837.2716                               : spmass
-!    0.371391E-06    2.0000   34.8965   500    : sprmin, rmt, sprmax, nrmt
-!    10                                        : spnst
-!    1   0   1   2.00000    T                  : spn, spl, spk, spocc, spcore
+!    0.371391E-06    2.0000   34.8965   500    : rminsp, rmt, rmaxsp, nrmt
+!    10                                        : nstsp
+!    1   0   1   2.00000    T                  : nsp, lsp, ksp, occsp, spcore
 !    2   0   1   2.00000    T
 !    2   1   1   2.00000    T
 !    2   1   2   4.00000    T
@@ -448,15 +451,15 @@ end program
 !   {\tt spmass} \\
 !   Nuclear mass in atomic units.
 !   \vskip 6pt
-!   {\tt sprmin}, {\tt rmt}, {\tt sprmax}, {\tt nrmt} \\
+!   {\tt rminsp}, {\tt rmt}, {\tt rmaxsp}, {\tt nrmt} \\
 !   Respectively, the minimum radius on logarithmic radial mesh; muffin-tin
 !   radius; effective infinity for atomic radial mesh; and number of radial mesh
 !   points to muffin-tin radius.
 !   \vskip 6pt
-!   {\tt spnst} \\
+!   {\tt nstsp} \\
 !   Number of atomic states.
 !   \vskip 6pt
-!   {\tt spn}, {\tt spl}, {\tt spk}, {\tt spocc}, {\tt spcore} \\
+!   {\tt nsp}, {\tt lsp}, {\tt ksp}, {\tt occsp}, {\tt spcore} \\
 !   Respectively, the principal quantum number of the radial Dirac equation;
 !   quantum number $l$; quantum number $k$ ($l$ or $l+1$); occupancy of atomic
 !   state (can be fractional); {\tt .T.} if state is in the core and therefore
@@ -814,6 +817,9 @@ end program
 !    {\it Phys. Rev. B} {\bf 72}, 125203 (2005); see {\tt fxclrc} \\
 !   210 & `Bootstrap' kernel, S. Sharma, J. K. Dewhurst, A. Sanna and
 !    E. K. U. Gross, {\it Phys. Rev. Lett.} {\bf 107}, 186401 (2011) \\
+!   211 & Single iteration bootstrap \\
+!   212 & Revised bootstrap, S. Rigamonti, S. Botti, V. Veniard, C. Draxl,
+!    L. Reining, F. Sottile, {\it Phys. Rev. Lett.} {\bf 114}, 146402 (2015)
 !   \end{tabularx}
 !
 !   \block{gmaxrf}{
@@ -1186,7 +1192,7 @@ end program
 !   $$ {\bf A}(t)=\sum_{i=1}^n {\bf A}_0^i\exp
 !    \left[-(t-t_0^i)^2/2\sigma_i^2\right]
 !    \sin\left[w_i(t-t_0^i)+\phi_i+r_{\rm c}^i t^2/2\right], $$
-!   where $\sigma=d/2\sqrt{2\ln 2}$.
+!   where $\sigma=d/2\sqrt{2\ln 2}$. See also {\tt ramp}.
 !
 !   \block{radkpt}{
 !   {\tt radkpt } & radius of sphere used to determine $k$-point density &
@@ -1195,6 +1201,20 @@ end program
 !   is set to {\tt .true.} then the mesh sizes will be determined by
 !   $n_i=R_k|{\bf B}_i|+1$, where ${\bf B}_i$ are the primitive reciprocal
 !   lattice vectors.
+!
+!   \block{ramp}{
+!   {\tt n} & number of ramps & integer & - \\
+!   \hline
+!   {\tt a0(i)} & polarisation vector (including amplitude) & real(3) & - \\
+!   {\tt t0(i)} & ramp start time & real & - \\
+!   {\tt c1(i)} & linear coefficient of ${\bf A}(t)$ & real & - \\
+!   {\tt c2(i)} & quadratic coefficient & real & -}
+!   Parameters used to generate a time-dependent vector potential ${\bf A}(t)$
+!   representing a constant or linearly increasing electric field
+!   ${\bf E}(t)=-\partial{\bf A}(t)/\partial t$. The vector potential is given
+!   by
+!   $$ {\bf A}(t)=\sum_{i=1}^n {\bf A}_0^i
+!    \left[c_1(t-t_0)+c_2(t-t_0)^2\right]\Theta(t-t_0). $$
 !
 !   \block{readadu}{
 !   {\tt readadu} & set to {\tt .true.} if the interpolation constant for

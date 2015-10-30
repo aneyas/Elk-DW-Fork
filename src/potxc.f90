@@ -128,7 +128,7 @@ do is=1,nspecies
          vxdn=vxdn,vcup=vcup,vcdn=vcdn)
       else if (xcgrad.eq.1) then
         if (ncgga) then
-          rho(:)=0.5d0*rho(:)
+          rho(1:n)=0.5d0*rho(1:n)
           call ggamt_sp_1(is,rho,rho,grho,gup,gdn,g2up,g2dn,g3rho,g3up,g3dn)
         else
           call ggamt_sp_1(is,rhoup,rhodn,grho,gup,gdn,g2up,g2dn,g3rho,g3up,g3dn)
@@ -251,7 +251,7 @@ if (spinpol) then
      vxup=vxup,vxdn=vxdn,vcup=vcup,vcdn=vcdn)
   else if (xcgrad.eq.1) then
     if (ncgga) then
-      rho(:)=0.5d0*rhoir(:)
+      rho(1:ngtot)=0.5d0*rhoir(1:ngtot)
       call ggair_sp_1(rho,rho,grho,gup,gdn,g2up,g2dn,g3rho,g3up,g3dn)
     else
       call ggair_sp_1(rhoup,rhodn,grho,gup,gdn,g2up,g2dn,g3rho,g3up,g3dn)
@@ -345,10 +345,10 @@ if (xctype(1).lt.0) call oepmain
 ! symmetrise the exchange-correlation potential
 call symrf(1,vxcmt,vxcir)
 if (spinpol) then
-! remove the source contribution if required
-  if (nosource) call projsbf
 ! symmetrise the exchange-correlation effective field
   call symrvf(1,bxcmt,bxcir)
+! remove the source contribution if required
+  if (nosource) call projsbf
 end if
 if (xcgrad.eq.3) deallocate(taumt,tauir)
 deallocate(rho,ex,ec,vxc)

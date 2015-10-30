@@ -35,12 +35,12 @@ do ias=1,natmtot
   nrc=nrcmt(is)
   nrci=nrcmtinr(is)
 ! convert the density to spherical harmonics
-  call rfcopy(nr,nri,rhomt(:,:,ias),rfmt)
+  call rfcpy(nr,nri,rhomt(:,:,ias),rfmt)
   call rfsht(nrc,nrci,1,rfmt,lradstp,rhomt(:,:,ias))
 ! convert magnetisation to spherical harmonics
   if (spinpol) then
     do idm=1,ndmag
-      call rfcopy(nr,nri,magmt(:,:,ias,idm),rfmt)
+      call rfcpy(nr,nri,magmt(:,:,ias,idm),rfmt)
       call rfsht(nrc,nrci,1,rfmt,lradstp,magmt(:,:,ias,idm))
     end do
   end if
@@ -52,7 +52,7 @@ return
 
 contains
 
-subroutine rfcopy(nr,nri,rfmt1,rfmt2)
+subroutine rfcpy(nr,nri,rfmt1,rfmt2)
 implicit none
 ! arguments
 integer, intent(in) :: nr,nri
@@ -63,11 +63,11 @@ integer ir,irc
 irc=0
 do ir=1,nri,lradstp
   irc=irc+1
-  rfmt2(1:lmmaxinr,irc)=rfmt1(1:lmmaxinr,ir)
+  call dcopy(lmmaxinr,rfmt1(:,ir),1,rfmt2(:,irc),1)
 end do
 do ir=nri+lradstp,nr,lradstp
   irc=irc+1
-  rfmt2(:,irc)=rfmt1(:,ir)
+  call dcopy(lmmaxvr,rfmt1(:,ir),1,rfmt2(:,irc),1)
 end do
 return
 end subroutine

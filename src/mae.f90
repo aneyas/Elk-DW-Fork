@@ -10,8 +10,9 @@ use modstore
 implicit none
 ! local variables
 integer i,j,im(2)
-real(8) v1(3),v2(3),th,em(2),de
-real(8) a(3,3),b(3,3),c(3,3)
+real(8) em(2),de
+real(8) v1(3),v2(3),th
+real(8) a(3,3),b(3,3)
 ! initialise global variables
 call init0
 ! store original parameters
@@ -22,7 +23,6 @@ cmagz0=cmagz
 bfieldc00(:)=bfieldc0(:)
 reducebf0=reducebf
 fsmtype0=fsmtype
-ptnucl0=ptnucl
 vkloff0(:)=vkloff(:)
 ! enable spin-orbit coupling
 spinorb=.true.
@@ -36,8 +36,6 @@ if (task.eq.28) then
 else
   trdstate=.true.
 end if
-! finite nuclear radius
-ptnucl=.false.
 ! zero k-point offset
 vkloff(:)=0.d0
 ! start with large magnetic field
@@ -73,16 +71,18 @@ do i=1,npmae
   v1(2)=1.d0
   th=-tpmae(1,i)
   call axangrot(v1,th,b)
-  call r3mm(b,a,c)
-  call r3mm(c,avec0,avec)
+  call r3mm(b,a,rotsht)
+  call r3mm(rotsht,avec0,avec)
 ! find the corresponding moment direction vector
-  call r3minv(c,a)
+  call r3minv(rotsht,a)
   v1(:)=0.d0
   v1(3)=1.d0
   call r3mv(a,v1,v2)
   do j=1,3
     if (abs(v2(j)).lt.epslat) v2(j)=0.d0
   end do
+! rotate the spherical cover used for the spherical harmonic transform
+  trotsht=.true.
 ! run the ground-state calculation
   call gndstate
 ! subsequent calculations should read the previous density
@@ -146,8 +146,8 @@ cmagz=cmagz0
 fsmtype=fsmtype0
 bfieldc0(:)=bfieldc00(:)
 reducebf=reducebf0
-ptnucl=ptnucl0
 vkloff(:)=vkloff0(:)
+trotsht=.false.
 return
 end subroutine
 

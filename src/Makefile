@@ -4,21 +4,20 @@ include ../make.inc
 # modules
 SRC_modules = modmain.f90 $(SRC_MPI) modmpi.f90 $(SRC_libxc) modxcifc.f90 \
  modfxcifc.f90 moddftu.f90 modrdm.f90 modphonon.f90 modscdft.f90 modtest.f90 \
- modrandom.f90 modstore.f90 modpw.f90 modvars.f90 modtddft.f90 rdiracint.f90 \
- rdiracdme.f90 rdirac.f90 timesec.f90 rschrodint.f90 rschroddme.f90 \
- rschrodapp.f90
+ modrandom.f90 modstore.f90 modpw.f90 modvars.f90 modtddft.f90
 
 # Elk program
 SRC_elk = elk.f90
 
 # main subroutines and functions
-SRC_main0 = \
- spline.f90 factnm.f90 factr.f90 genylm.f90 genrlm.f90 rfinp.f90 rfmtinp.f90 \
- rfinterp.f90 mixpack.f90 rfpack.f90 genvsig.f90 potnucl.f90 ztorflm.f90 \
- rtozflm.f90 fderiv.f90 wavefmt.f90 charge.f90 moment.f90 rfmtaddc.f90 \
- rfmtadd.f90 zfinp.f90 zfmtinp.f90 delevec.f90 zbsht.f90 zfsht.f90 genkmat.f90
+SRC_main0 = zfmtinp.f90 genrmesh.f90 rfmtinp.f90 rdiracint.f90 \
+ rdirac.f90 rschrodint.f90 timesec.f90
 
 SRC_main1 = \
+ spline.f90 factnm.f90 factr.f90 genylm.f90 genrlm.f90 rfinp.f90 \
+ rfinterp.f90 mixpack.f90 rfpack.f90 genvsig.f90 potnucl.f90 ztorflm.f90 \
+ rtozflm.f90 fderiv.f90 wavefmt.f90 charge.f90 moment.f90 rfmtaddc.f90 \
+ rfmtadd.f90 zfinp.f90 delevec.f90 zbsht.f90 zfsht.f90 genkmat.f90 \
  findprimcell.f90 genppts.f90 rbsht.f90 rfsht.f90 \
  energy.f90 rhonorm.f90 rhocore.f90 energynn.f90 \
  zfmtctof.f90 rfmtctof.f90 init0.f90 init1.f90 init2.f90 init3.f90 init4.f90 \
@@ -52,7 +51,7 @@ SRC_main1 = \
  sdelta_fd.f90 stheta_fd.f90 sdelta_sq.f90 stheta_sq.f90 sdelta_lr.f90 \
  stheta_lr.f90 vecfbz.f90 mixlinear.f90 mixadapt.f90 mixpulay.f90 \
  mixbroyden.f90 ylmrot.f90 ylmroty.f90 rlmrot.f90 rotrflm.f90 radnucl.f90 \
- findngkmax.f90 zgerci.f90 gencfun.f90 writegeom.f90 genrmesh.f90 effmass.f90 \
+ findngkmax.f90 zgerci.f90 gencfun.f90 writegeom.f90 effmass.f90 \
  mossbauer.f90 findband.f90 compton.f90 geomplot.f90 genlmirep.f90 \
  gndstate.f90 genjlgq0r.f90 findqpt.f90 ssfext.f90 sstask.f90 spiralsc.f90 \
  genscss.f90 findscq.f90 writeqpts.f90 writelsj.f90 getcf2pt.f90 proj2d.f90 \
@@ -81,7 +80,8 @@ SRC_main1 = \
  writespecies.f90 massnucl.f90 rzfmtinp.f90 rzfmtadd.f90 rzfadd.f90 \
  rzfinp.f90 zfcmtinp.f90 genpmat.f90 reademd.f90 emdplot.f90 rfhkintp.f90 \
  emdplot3d.f90 emdplot2d.f90 emdplot1d.f90 plotpt3d.f90 plotpt2d.f90 \
- rfmtscal.f90 rfmtcopy.f90 rfmtzero.f90 rotrfmt.f90 zfmtzero.f90
+ rfmtscal.f90 rfmtcopy.f90 rfmtzero.f90 rotrfmt.f90 zfmtzero.f90 genvmmtsv.f90 \
+ fintgt.f90 writeevsp.f90 sctovec.f90
 
 SRC_main = $(SRC_main0) $(SRC_main1)
 
@@ -205,6 +205,7 @@ release:
 	cp -r spacegroup $(RELEASE)/src
 	cp $(SRC) Makefile protex elk_silhouette.pdf $(RELEASE)/src
 	cp $(SRC) rmspaces grepelk vimelk $(RELEASE)/src
+	cp mpi_stub.f90 $(RELEASE)/src
 	cp libxc_funcs.f90 libxc.f90 libxcifc.f90 libxcifc_stub.f90 $(RELEASE)/src
 	cp zfftifc.f90 zfftifc_fftw.f90 zfftifc_mkl.f90 $(RELEASE)/src
 	cp -r ../examples $(RELEASE)

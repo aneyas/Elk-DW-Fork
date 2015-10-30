@@ -7,8 +7,7 @@ subroutine rfmtcopy(nr,nri,lrstp,rfmt1,rfmt2)
 use modmain
 implicit none
 ! arguments
-integer, intent(in) :: nr,nri
-integer, intent(in) :: lrstp
+integer, intent(in) :: nr,nri,lrstp
 real(8), intent(in) :: rfmt1(lmmaxvr,nr)
 real(8), intent(out) :: rfmt2(lmmaxvr,nr)
 ! local variables

@@ -16,6 +16,7 @@ complex(8), intent(out) :: vfxc(ngrf,ngrf,nwrf)
 ! local variables
 integer ig,jg,iw,info
 real(8) t1
+complex(8) z1
 ! allocatable arrays
 integer, allocatable :: ipiv(:)
 complex(8), allocatable :: a(:,:),b(:,:),work(:)
@@ -63,6 +64,43 @@ case(211)
     end do
   end do
   deallocate(ipiv,a,work)
+case(212)
+! Revised bootstrap (RBO)
+! See: S. Rigamonti, et al., Phys. Rev. Lett. 114, 146402
+  vfxc(:,:,:)=0.d0
+  allocate(ipiv(ngrf),a(ngrf,ngrf),b(ngrf,ngrf),work(ngrf))
+  a(:,:)=eps0(:,:,1)
+! invert RPA epsilon
+  call zgetrf(ngrf,ngrf,a,ngrf,ipiv,info)
+  if (info.eq.0) call zgetri(ngrf,a,ngrf,ipiv,work,ngrf,info)
+  if (info.ne.0) then
+    write(*,*)
+    write(*,'("Error(genvfxc): unable to invert RPA epsilon")')
+    write(*,*)
+    stop
+  end if
+! calculate RPA chi
+  b(:,:)=a(:,:)
+  do ig=1,ngrf
+    b(ig,ig)=b(ig,ig)-1.d0
+  end do
+! invert RPA chi
+  call zgetrf(ngrf,ngrf,a,ngrf,ipiv,info)
+  if (info.eq.0) call zgetri(ngrf,b,ngrf,ipiv,work,ngrf,info)
+  if (info.ne.0) then
+    write(*,*)
+    write(*,'("Error(genvfxc): unable to invert RPA chi")')
+    write(*,*)
+    stop
+  end if
+  z1=a(1,1)
+  do ig=1,ngrf
+    do jg=1,ngrf
+      vfxc(ig,jg,:)=z1*b(ig,jg)
+    end do
+  end do
+  vfxc(1,1,:)=a(1,1)/vchi0(1,1,1)
+  deallocate(ipiv,a,b,work)
 case default
   write(*,*)
   write(*,'("Error(genvfxc): fxctype not defined : ",I8)') fxctype

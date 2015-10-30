@@ -33,8 +33,8 @@ logical tforce0
 logical autokpt0
 integer ngridk0(3)
 real(8) vkloff0(3)
-logical ptnucl0
 integer lmaxinr0
+logical trimvg0
 
 end module
 

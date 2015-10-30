@@ -30,12 +30,10 @@ do j=1,n
       a1=dble(z1)
       call daxpy(2*m,a1,x,1,a(:,j),1)
     end if
-  else
-    if (abs(aimag(z1)).gt.eps) then
+  else if (abs(aimag(z1)).gt.eps) then
 ! imaginary prefactor
-      b1=aimag(z1)
-      a(1:m,j)=a(1:m,j)+b1*cmplx(-aimag(x(1:m)),dble(x(1:m)),8)
-    end if
+    b1=aimag(z1)
+    a(1:m,j)=a(1:m,j)+b1*cmplx(-aimag(x(1:m)),dble(x(1:m)),8)
   end if
 end do
 !$OMP END DO

@@ -124,7 +124,7 @@ do ias=1,natmtot
           j=jst+nstfv
         end if
         if (i.le.j) then
-          evecsv(i,j)=evecsv(i,j)+zfmtinp(nrc,nrci,rcmt(:,is), &
+          evecsv(i,j)=evecsv(i,j)+zfmtinp(nrc,nrci,rcmt(:,is),r2cmt(:,is), &
            wfmt1(:,:,ist,ispn),wfmt4(:,:,k))
         end if
       end do
